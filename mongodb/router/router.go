@@ -8,7 +8,8 @@ import (
 func Router() *mux.Router {
 	m := mux.NewRouter()
 	m.HandleFunc("/data", controller.GetAllData).Methods("GET")
-	m.HandleFunc("/data/{name}", controller.GetOneData).Methods("GET")
+	m.HandleFunc("/databyname/{name}", controller.GetOneDatabyName).Methods("GET")
+	m.HandleFunc("/databyid/{id}", controller.GetOneDatabyId).Methods("GET")
 	m.HandleFunc("/add", controller.InsertData).Methods("POST")
 	m.HandleFunc("/delete/{id}", controller.DeleteOne).Methods("DELETE")
 	m.HandleFunc("/deleteall", controller.DeleteAllData).Methods("DELETE")
