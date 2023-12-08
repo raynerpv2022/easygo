@@ -44,12 +44,24 @@ func init() {
 
 // Helper methods
 
-func updateOneData(idO string, potcast data.Podcast) (int64, error) {
+func updateOneData(idO string, podcast data.Podcast) (int64, error) {
 	id, err := primitive.ObjectIDFromHex(idO)
 	if err != nil {
 		return 0, fmt.Errorf("ID is not valid format, try again")
 	}
-	updateResult, err := collection.ReplaceOne(context.Background(), bson.M{"_id": id}, potcast)
+	filter := bson.M{"_id": id}
+
+	//replaceOne method ,$set is not used, if  a field is not present, replace  will not include it.
+	// podcastReplace := bson.M{"name": podcast.Name, "updateTime": podcast.UpdateTime}
+	// updateResult, err := collection.ReplaceOne(context.Background(), filter, podcastReplace)
+
+	// UpdateOne update data filter by filter variable, data by $set.
+	podcastUpdateOne := bson.M{"$set": bson.M{"name": podcast.Name, "title": podcast.Title, "updateTime": podcast.UpdateTime}}
+	updateResult, err := collection.UpdateOne(context.Background(), filter, podcastUpdateOne)
+
+	if err != nil {
+		return 0, fmt.Errorf("error, ufffff try again %v ", err.Error())
+	}
 
 	return updateResult.ModifiedCount, nil
 
@@ -267,7 +279,6 @@ func GetAllData(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("GET all data")
 	allData := getAllData()
 
-	// json.NewEncoder(w).Encode("*********** List All Potcast in Data Base **************")
 	json.NewEncoder(w).Encode(allData)
 
 }
